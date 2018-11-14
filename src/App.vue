@@ -43,7 +43,8 @@ export default {
       if (!this.books.length) {
         return 0
       }
-      return ~~((new Date() - new Date(this.books[0].date + ' 00:00:00')) /
+      const [y, m, d] = this.books[0].date.split('-').map(it => +it)
+      return ~~((new Date() - new Date(y, m - 1, d)) /
         (24 * 60 * 60 * 1000)) + 1
     }
   },
