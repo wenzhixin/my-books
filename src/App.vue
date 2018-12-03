@@ -3,6 +3,7 @@
     <h3>已读书单</h3>
     <div class="stat">
       {{ books.length }}本/{{ days }}天
+      <i class="fas" :class="sortClass" @click="toggle"></i>
     </div>
     <div class="books">
       <div v-for="(book, i) in books" :key="i" class="book">
@@ -32,7 +33,8 @@ export default {
   },
   data () {
     return {
-      books: []
+      books: [],
+      sortClass: 'fa-sort-amount-down'
     }
   },
   mounted () {
@@ -43,7 +45,7 @@ export default {
       if (!this.books.length) {
         return 0
       }
-      const [y, m, d] = this.books[0].date.split('-').map(it => +it)
+      const [y, m, d] = this.firstDate.split('-').map(it => +it)
       return ~~((new Date() - new Date(y, m - 1, d)) /
         (24 * 60 * 60 * 1000)) + 1
     }
@@ -51,11 +53,17 @@ export default {
   methods: {
     getBooks () {
       axios.get('data.json?d=' + new Date()).then(res => {
-        this.books = res.data.reverse()
+        this.books = res.data
+        this.firstDate = res.data[res.data.length - 1].date
       })
     },
     toHtml (text) {
       return text.replace(/\n/g, '<br/>')
+    },
+    toggle () {
+      this.books = this.books.reverse()
+      this.sortClass = this.sortClass === 'fa-sort-amount-down' ?
+        'fa-sort-amount-up' : 'fa-sort-amount-down'
     }
   }
 }
@@ -74,6 +82,11 @@ h3 {
 .stat {
   background: #efefef;
   padding: 5px;
+}
+.fas {
+  float: right;
+  font-size: 18px;
+  margin-right: 5px;
 }
 .books {
   padding: 0 6px;
