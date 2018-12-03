@@ -51,7 +51,7 @@ export default {
   methods: {
     getBooks () {
       axios.get('data.json?d=' + new Date()).then(res => {
-        this.books = res.data
+        this.books = res.data.reverse()
       })
     },
     toHtml (text) {
